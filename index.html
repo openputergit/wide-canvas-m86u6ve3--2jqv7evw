@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scorpio Chat Bot - AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+            color: #333;
+        }
+        
+        .scorpio-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #0ea5e9 100%);
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .bot-message {
+            background-color: #e0f2fe;
+            border-radius: 18px 18px 18px 4px;
+        }
+        
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+        
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .typing-animation::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .dark {
+            background-color: #1e293b;
+            color: #f1f5f9;
+        }
+        
+        .dark .chat-container {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+        }
+        
+        .dark .bot-message {
+            background-color: #334155;
+            color: #f1f5f9;
+        }
+        
+        .dark .feature-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">
+        <button id="themeToggle" class="bg-gray-200 dark:bg-gray-700 rounded-full p-2">
+            <i class="bi bi-sun-fill text-yellow-500"></i>
+            <i class="bi bi-moon-fill text-blue-600 hidden"></i>
+        </button>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="scorpio-gradient text-white py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Meet Scorpio, Your Smart AI Chat Assistant</h1>
+                    <p class="text-xl mb-6 text-blue-100">Intelligent conversations with cutting-edge technology that adapts to your needs</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="bg-white text-blue-600 font-semibold py-3 px-6 rounded-full hover:bg-blue-50 transition duration-300">Try Scorpio Now</button>
+                        <button class="bg-transparent border-2 border-white text-white font-semibold py-3 px-6 rounded-full hover:bg-white/10 transition duration-300">Learn More</button>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="https://images.unsplash.com/photo-1677442135854-8076bc33012e?q=80&w=500&auto=format&fit=crop" alt="Scorpio AI Bot Illustration" class="rounded-lg w-full max-w-md shadow-2xl">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Chat Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Experience Scorpio in Action</h2>
+            <div class="max-w-3xl mx-auto">
+                <div class="chat-container p-4 mb-4" id="chatContainer">
+                    <div class="bot-message p-3 mb-3 max-w-xs">
+                        <p class="m-0">Hi there! I'm Scorpio, your personal AI assistant. How can I help you today?</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="userInput" class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ask Scorpio anything...">
+                    <button id="sendButton" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                        <i class="bi bi-send-fill"></i>
+                    </button>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-gray-500 text-sm">Try asking about weather, calculations, or creative writing!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4">Unique Features</h2>
+            <p class="text-gray-600 text-center max-w-2xl mx-auto mb-12">Scorpio goes beyond basic chat functionality with these powerful capabilities</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-lightning-charge-fill text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Real-time Learning</h3>
+                    <p class="text-gray-600">Scorpio learns from every conversation, getting smarter and more personalized over time.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-translate text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Multilingual Support</h3>
+                    <p class="text-gray-600">Communicate in over 50 languages with natural translations and cultural context.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-green-100 text-green-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-shield-check text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Privacy-Focused</h3>
+                    <p class="text-gray-600">Your conversations are encrypted and never stored permanently, ensuring your data stays secure.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-code-square text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Code Assistance</h3>
+                    <p class="text-gray-600">Get help with programming problems in multiple languages with syntax highlighting.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-red-100 text-red-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-image text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Image Understanding</h3>
+                    <p class="text-gray-600">Upload images and Scorpio can analyze, describe, and answer questions about them.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="feature-card bg-white p-6 rounded-xl shadow-md">
+                    <div class="bg-indigo-100 text-indigo-600 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
+                        <i class="bi bi-calendar-check text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Smart Reminders</h3>
+                    <p class="text-gray-600">Set up intelligent reminders that adapt to your schedule and priorities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">How People Use Scorpio</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="User" class="w-14 h-14 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-semibold">Professional Writer</h4>
+                            <p class="text-gray-600 text-sm">Content Creation & Editing</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Scorpio helps me brainstorm ideas, refine my writing, and check facts. It's like having a research assistant and editor available 24/7."</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop&crop=face" alt="User" class="w-14 h-14 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-semibold">Software Developer</h4>
+                            <p class="text-gray-600 text-sm">Coding & Debugging</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"When I'm stuck on a coding problem, Scorpio helps me debug, suggests optimizations, and explains complex concepts in simple terms."</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop&crop=face" alt="User" class="w-14 h-14 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-semibold">Business Manager</h4>
+                            <p class="text-gray-600 text-sm">Data Analysis & Reports</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Scorpio helps me analyze data, generate reports, and prepare for presentations. It's become an essential part of my daily workflow."</p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="User" class="w-14 h-14 rounded-full object-cover">
+                        <div>
+                            <h4 class="font-semibold">Student</h4>
+                            <p class="text-gray-600 text-sm">Learning & Research</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700">"Whether I need help understanding complex topics or researching for assignments, Scorpio provides clear explanations and reliable sources."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-4">Simple Pricing</h2>
+            <p class="text-gray-600 text-center max-w-2xl mx-auto mb-12">Choose the plan that works best for your needs</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Free</h3>
+                        <div class="text-3xl font-bold mb-4">$0<span class="text-sm text-gray-500 font-normal">/month</span></div>
+                        <p class="text-gray-600 mb-6">Perfect for casual users</p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Up to 100 messages/day</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Basic features</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Standard response time</span>
+                            </li>
+                        </ul>
+                        <button class="w-full py-2 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">Get Started</button>
+                    </div>
+                </div>
+                
+                <!-- Premium Tier -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden transform scale-105 border-2 border-blue-500">
+                    <div class="bg-blue-500 text-white text-center py-2 text-sm font-semibold">MOST POPULAR</div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Premium</h3>
+                        <div class="text-3xl font-bold mb-4">$12<span class="text-sm text-gray-500 font-normal">/month</span></div>
+                        <p class="text-gray-600 mb-6">For individuals who need more</p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Unlimited messages</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>All features included</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Priority response</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Image analysis</span>
+                            </li>
+                        </ul>
+                        <button class="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Get Premium</button>
+                    </div>
+                </div>
+                
+                <!-- Enterprise Tier -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Enterprise</h3>
+                        <div class="text-3xl font-bold mb-4">Custom<span class="text-sm text-gray-500 font-normal"> pricing</span></div>
+                        <p class="text-gray-600 mb-6">For teams and businesses</p>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Unlimited messages</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Advanced analytics</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Custom integrations</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="bi bi-check-circle-fill text-green-500"></i>
+                                <span>Dedicated support</span>
+                            </li>
+                        </ul>
+                        <button class="w-full py-2 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            
+            <div class="space-y-4" id="faqAccordion">
+                <!-- FAQ Item 1 -->
+                <div class="border border-gray-200 rounded-lg">
+                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center" onclick="toggleFaq(0)">
+                        How does Scorpio differ from other chatbots?
+                        <i class="bi bi-chevron-down transition-transform faq-icon"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4">
+                        <p class="text-gray-700">Scorpio combines multiple AI models to provide more accurate, nuanced, and context-aware responses. It also features unique capabilities like image analysis, code debugging, and adaptive learning that remembers your preferences over time.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="border border-gray-200 rounded-lg">
+                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center" onclick="toggleFaq(1)">
+                        Is my data secure with Scorpio?
+                        <i class="bi bi-chevron-down transition-transform faq-icon"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4">
+                        <p class="text-gray-700">Absolutely. We use end-to-end encryption, and your conversations are not stored permanently. We have a strict privacy policy that prevents your data from being used for training unless you explicitly opt in.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="border border-gray-200 rounded-lg">
+                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center" onclick="toggleFaq(2)">
+                        Can I use Scorpio on multiple devices?
+                        <i class="bi bi-chevron-down transition-transform faq-icon"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4">
+                        <p class="text-gray-700">Yes, Scorpio is available on web, iOS, and Android. Your conversations sync across all your devices so you can pick up right where you left off.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="border border-gray-200 rounded-lg">
+                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center" onclick="toggleFaq(3)">
+                        What happens if I exceed my message limit on the free plan?
+                        <i class="bi bi-chevron-down transition-transform faq-icon"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4">
+                        <p class="text-gray-700">Once you reach your daily message limit, you'll need to wait until the next day to continue using Scorpio, or you can upgrade to a premium plan for unlimited messages.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="border border-gray-200 rounded-lg">
+                    <button class="w-full px-6 py-4 text-left font-semibold flex justify-between items-center" onclick="toggleFaq(4)">
+                        Can Scorpio integrate with other tools I use?
+                        <i class="bi bi-chevron-down transition-transform faq-icon"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-4">
+                        <p class="text-gray-700">Yes, Scorpio offers integrations with popular platforms like Slack, Microsoft Teams, Google Workspace, and more. Enterprise plans include custom integrations for your specific workflow needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="scorpio-gradient py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Ready to experience Scorpio?</h2>
+            <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Join thousands of users who are enhancing their productivity with AI assistance</p>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <button class="bg-white text-blue-600 font-semibold py-3 px-8 rounded-full hover:bg-blue-50 transition duration-300 text-lg">Try Scorpio Free</button>
+                <button class="bg-transparent border-2 border-white text-white font-semibold py-3 px-8 rounded-full hover:bg-white/10 transition duration-300 text-lg">Schedule Demo</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-white text-lg font-semibold mb-4">Scorpio AI</h3>
+                    <p class="mb-4">Intelligent conversations powered by advanced AI technology.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white transition">Integrations</a></li>
+                        <li><a href="#" class="hover:text-white transition">Case Studies</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Community</a></li>
+                        <li><a href="#" class="hover:text-white transition">Developers</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-white text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition">Press Kit</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p>© 2023 Scorpio AI. All rights reserved.</p>
+                    <div class="flex gap-6 mt-4 md:mt-0">
+                        <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                        <a href="#" class="hover:text-white transition">Terms of Service</a>
+                        <a href="#" class="hover:text-white transition">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample responses for the demo chat
+        const botResponses = [
+            "I'd be happy to help with that! What specific information are you looking for?",
+            "Based on my analysis, here's what I found on that topic...",
+            "Great question! The answer involves several factors to consider...",
+            "I can definitely assist with that task. Let me guide you through the process.",
+            "Let me analyze that for you. Here are the key insights you should know."
+        ];
+        
+        // Chat functionality
+        const chatContainer = document.getElementById('chatContainer');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'user-message p-3 mb-3 ml-auto max-w-xs' : 'bot-message p-3 mb-3 max-w-xs';
+            messageDiv.innerHTML = `<p class="m-0">${message}</p>`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'bot-message p-3 mb-3 max-w-xs typing-animation';
+            typingDiv.innerHTML = '<p class="m-0">Scorpio is typing</p>';
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            
+            // Add user message
+            addMessage(message, true);
+            userInput.value = '';
+            
+            // Show typing indicator
+            addTypingIndicator();
+            
+            // Simulate bot response after delay
+            setTimeout(() => {
+                removeTypingIndicator();
+                const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                addMessage(randomResponse);
+            }, 1500);
+        }
+        
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // FAQ accordion functionality
+        function toggleFaq(index) {
+            const faqContents = document.querySelectorAll('.faq-content');
+            const faqIcons = document.querySelectorAll('.faq-icon');
+            
+            if (faqContents[index].classList.contains('hidden')) {
+                faqContents[index].classList.remove('hidden');
+                faqIcons[index].classList.add('rotate-180');
+            } else {
+                faqContents[index].classList.add('hidden');
+                faqIcons[index].classList.remove('rotate-180');
+            }
+        }
+        
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = themeToggle.querySelector('.bi-sun-fill');
+        const moonIcon = themeToggle.querySelector('.bi-moon-fill');
+        
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            
+            // Toggle icons
+            sunIcon.classList.toggle('hidden');
+            moonIcon.classList.toggle('hidden');
+            
+            // Update all feature cards for dark mode
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                if (document.body.classList.contains('dark')) {
+                    card.classList.remove('bg-white');
+                    card.classList.add('bg-gray-800');
+                } else {
+                    card.classList.remove('bg-gray-800');
+                    card.classList.add('bg-white');
+                }
+            });
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
